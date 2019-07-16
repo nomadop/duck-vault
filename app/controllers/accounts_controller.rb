@@ -12,7 +12,9 @@ class AccountsController < ApplicationController
     @accounts = Account.all
     @account_sections = @accounts
       .group_by {|account| account.datetime.beginning_of_month.strftime('%Y-%m')}
-      .map {|month, accounts| { title: month, data: accounts, total: accounts.map(&:change).sum }}
+      .map do |month, accounts|
+        { title: month, data: accounts, total: view_context.number_to_currency(accounts.map(&:change).sum, locale: 'cn') }
+      end
     render json: @account_sections
   end
 

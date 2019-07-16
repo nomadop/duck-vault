@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @account.type %>
+</p>
+
+<p>
+  <strong>Sub type:</strong>
+  <%= @account.sub_type %>
+</p>
+
+<p>
+  <strong>Merchant:</strong>
+  <%= @account.merchant %>
+</p>
+
+<p>
+  <strong>Change:</strong>
+  <%= @account.change %>
+</p>
+
+<p>
+  <strong>Currency:</strong>
+  <%= @account.currency %>
+</p>
+
+<p>
+  <strong>Comments:</strong>
+  <%= @account.comments %>
+</p>
+
+<p>
+  <strong>Datetime:</strong>
+  <%= @account.datetime %>
+</p>
+
+<%= link_to 'Edit', edit_account_path(@account) %> |
+<%= link_to 'Back', accounts_path %>

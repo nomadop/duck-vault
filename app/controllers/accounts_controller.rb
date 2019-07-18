@@ -9,7 +9,7 @@ class AccountsController < ApplicationController
   end
 
   def section
-    @accounts = Account.all
+    @accounts = Account.order(datetime: :desc)
     @account_sections = @accounts
       .group_by {|account| account.datetime.beginning_of_month.strftime('%Y-%m')}
       .map do |month, accounts|

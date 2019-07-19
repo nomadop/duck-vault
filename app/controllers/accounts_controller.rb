@@ -1,6 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: [:show, :edit, :update, :destroy]
-  skip_before_action :verify_authenticity_token
+  before_action :set_account, only: [:show, :edit, :update, :destroy, :inactive]
 
   # GET /accounts
   # GET /accounts.json
@@ -70,6 +69,9 @@ class AccountsController < ApplicationController
       format.html {redirect_to accounts_url, notice: 'Account was successfully destroyed.'}
       format.json {redirect_to action: :section, status: 303}
     end
+  end
+
+  def inactive
   end
 
   private

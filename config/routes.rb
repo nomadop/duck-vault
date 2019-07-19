@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  post 'authentication/login'
   resources :accounts do
     collection do
       get 'section'

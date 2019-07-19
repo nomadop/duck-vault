@@ -3,6 +3,10 @@ class Account < ApplicationRecord
 
   before_create :init_datetime
 
+  belongs_to :user, optional: true
+
+  scope :active, -> { where(active: true) }
+
   enum type: { 吃吃吃: 0, 买买买: 1 }
   enum currency: { cny: 0 }
 

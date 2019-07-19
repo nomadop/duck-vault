@@ -8,7 +8,7 @@ class AccountsController < ApplicationController
   end
 
   def section
-    @accounts = Account.order(datetime: :desc)
+    @accounts = Account.active.order(datetime: :desc)
     @account_sections = @accounts
       .group_by {|account| account.datetime.beginning_of_month.strftime('%Y-%m')}
       .map do |month, accounts|
@@ -72,6 +72,11 @@ class AccountsController < ApplicationController
   end
 
   def inactive
+    @account.update(active: false)
+    respond_to do |format|
+      format.html {redirect_to accounts_url, notice: 'Account was successfully inactived.'}
+      format.json {redirect_to action: :section, status: 303}
+    end
   end
 
   private

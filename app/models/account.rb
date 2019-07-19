@@ -7,6 +7,8 @@ class Account < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  delegate :username, to: :user, allow_nil: true
+
   enum type: { 吃吃吃: 0, 买买买: 1 }
   enum currency: { cny: 0 }
 

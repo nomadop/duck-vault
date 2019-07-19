@@ -4,15 +4,15 @@ class AccountsController < ApplicationController
   # GET /accounts
   # GET /accounts.json
   def index
-    @accounts = Account.all
+    @accounts = Account.includes(:user).all
   end
 
   def section
-    @accounts = Account.active.order(datetime: :desc)
+    @accounts = Account.active.includes(:user).order(datetime: :desc)
     @account_sections = @accounts
       .group_by {|account| account.datetime.beginning_of_month.strftime('%Y-%m')}
       .map do |month, accounts|
-        { title: month, data: accounts, total: view_context.number_to_currency(accounts.map(&:change).sum, locale: 'cn') }
+        { title: month, data: accounts.as_json(methods: :username), total: view_context.number_to_currency(accounts.map(&:change).sum, locale: 'cn') }
       end
     render json: @account_sections
   end

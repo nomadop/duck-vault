@@ -8,7 +8,16 @@ class AccountsController < ApplicationController
   end
 
   def section
-    @accounts = Account.active.includes(:user).order(datetime: :desc)
+    keyword = params[:keyword]
+    @account = if keyword
+      Account.joins(:user).where('sub_type like ?', "%#{keyword}%")
+        .or(Account.joins(:user).where('merchant like ?', "%#{keyword}%"))
+        .or(Account.joins(:user).where('comments like ?', "%#{keyword}%"))
+        .or(Account.joins(:user).where('users.username like ?', "%#{keyword}%"))
+    else
+      Account.all
+    end
+    @accounts = @account.active.includes(:user).order(datetime: :desc)
     @account_sections = @accounts
       .group_by {|account| account.datetime.beginning_of_month.strftime('%Y-%m')}
       .map do |month, accounts|

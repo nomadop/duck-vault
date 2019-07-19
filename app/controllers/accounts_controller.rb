@@ -73,10 +73,7 @@ class AccountsController < ApplicationController
 
   def inactive
     @account.update(active: false)
-    respond_to do |format|
-      format.html {redirect_to accounts_url, notice: 'Account was successfully inactived.'}
-      format.json {redirect_to action: :section, status: 303}
-    end
+    render json: { success: true }
   end
 
   private

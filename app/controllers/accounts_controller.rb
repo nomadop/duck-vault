@@ -10,7 +10,8 @@ class AccountsController < ApplicationController
   def section
     keyword = params[:keyword]
     @account = if keyword
-      Account.joins(:user).where(type: Account.types[keyword])
+      types = Account.types.select{ |enum, _| enum =~ %r(#{keyword}) }.values
+      Account.joins(:user).where(type: types)
         .or(Account.joins(:user).where('sub_type like ?', "%#{keyword}%"))
         .or(Account.joins(:user).where('merchant like ?', "%#{keyword}%"))
         .or(Account.joins(:user).where('comments like ?', "%#{keyword}%"))

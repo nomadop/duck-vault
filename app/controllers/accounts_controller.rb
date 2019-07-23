@@ -25,7 +25,7 @@ class AccountsController < ApplicationController
     @account_sections = @accounts
       .group_by {|account| account.datetime.getlocal.strftime('%Y-%m')}
       .map do |month, accounts|
-        { title: month, data: accounts.as_json(methods: :username), total: Account.month_trunc(month).sum(:change) }
+        { title: month, data: accounts.as_json(methods: :username), total: Account.active.month_trunc(month).sum(:change) }
       end
     render json: {
       accounts: @account_sections,

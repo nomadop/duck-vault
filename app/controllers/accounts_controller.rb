@@ -9,7 +9,8 @@ class AccountsController < ApplicationController
 
   def section
     keyword = params[:keyword]
-    @account = if keyword
+    anchor = params[:anchor]
+    @accounts = if keyword
       types = Account.types.select{ |enum, _| enum =~ %r(#{keyword}) }.values
       Account.joins(:user).where(type: types)
         .or(Account.joins(:user).where('sub_type like ?', "%#{keyword}%"))
@@ -19,13 +20,18 @@ class AccountsController < ApplicationController
     else
       Account.all
     end
-    @accounts = @account.active.includes(:user).order(datetime: :desc)
+    @accounts = @accounts.where('datetime < ?', Time.at(anchor.to_f)) if anchor
+    @accounts = @accounts.active.includes(:user).order(datetime: :desc).limit(100)
     @account_sections = @accounts
-      .group_by {|account| account.datetime.beginning_of_month.strftime('%Y-%m')}
+      .group_by {|account| account.datetime.getlocal.strftime('%Y-%m')}
       .map do |month, accounts|
-        { title: month, data: accounts.as_json(methods: :username), total: view_context.number_to_currency(accounts.map(&:change).sum, locale: 'cn') }
+        { title: month, data: accounts.as_json(methods: :username), total: Account.month_trunc(month).sum(:change) }
       end
-    render json: @account_sections
+    render json: {
+      accounts: @account_sections,
+      anchor: @accounts.last.datetime.to_f,
+      end_reached: @accounts.last == Account.order(:datetime).first
+    }
   end
 
   # GET /accounts/1

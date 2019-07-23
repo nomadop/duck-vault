@@ -6,6 +6,7 @@ class Account < ApplicationRecord
   belongs_to :user, optional: true
 
   scope :active, -> { where(active: true) }
+  scope :month_trunc, ->(month) { where("date_trunc('month', (datetime + interval '8 hour')) = timestamp ?", "#{month}-01") }
 
   delegate :username, to: :user, allow_nil: true
 

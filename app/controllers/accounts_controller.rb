@@ -20,17 +20,17 @@ class AccountsController < ApplicationController
     else
       Account.all
     end
-    @accounts = @accounts.where('datetime < ?', Time.at(anchor.to_f)) if anchor
-    @accounts = @accounts.active.includes(:user).order(datetime: :desc).limit(100)
-    @account_sections = @accounts
+    @accounts = @accounts.active.includes(:user).order(datetime: :desc)
+    @paged_accounts = anchor ? @accounts.where('datetime < ?', Time.at(anchor.to_f)).limit(100) : @accounts.limit(100)
+    @account_sections = @paged_accounts
       .group_by {|account| account.datetime.getlocal.strftime('%Y-%m')}
       .map do |month, accounts|
-        { title: month, data: accounts.as_json(methods: :username), total: Account.active.month_trunc(month).sum(:change) }
+        { title: month, data: accounts.as_json(methods: :username), total: @accounts.month_trunc(month).sum(:change) }
       end
     render json: {
       accounts: @account_sections,
-      anchor: @accounts.last.datetime.to_f,
-      end_reached: @accounts.last == Account.order(:datetime).first
+      anchor: @paged_accounts.last.datetime.to_f,
+      end_reached: @paged_accounts.last == @accounts.last
     }
   end
 

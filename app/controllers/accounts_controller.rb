@@ -29,7 +29,7 @@ class AccountsController < ApplicationController
       end
     render json: {
       accounts: @account_sections,
-      anchor: @paged_accounts.last.datetime.to_f,
+      anchor: @paged_accounts.last&.datetime&.to_f,
       end_reached: @paged_accounts.last == @accounts.last
     }
   end

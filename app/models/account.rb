@@ -10,7 +10,7 @@ class Account < ApplicationRecord
 
   delegate :username, to: :user, allow_nil: true
 
-  enum type: { 吃吃吃: 0, 买买买: 1 }
+  enum type: { 吃吃吃: 0, 买买买: 1, 出行: 2 }
   enum currency: { cny: 0 }
 
   private

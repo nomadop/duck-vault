@@ -14,6 +14,7 @@ class Account < ApplicationRecord
   enum currency: { cny: 0 }
 
   private
+
   def init_datetime
     self.datetime ||= self.created_at
   end

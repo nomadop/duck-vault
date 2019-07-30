@@ -10,6 +10,7 @@ class AccountsController < ApplicationController
   def section
     keyword = params[:keyword]
     anchor = params[:anchor]
+    type = params[:type]
     @accounts = if keyword
                   types = Account.types.select { |enum, _| enum =~ %r(#{keyword}) }.values
                   Account.joins(:user).where(type: types)
@@ -23,9 +24,11 @@ class AccountsController < ApplicationController
     @accounts = @accounts.active.includes(:user).order(datetime: :desc)
     @paged_accounts = anchor ? @accounts.where('datetime < ?', Time.at(anchor.to_f)).limit(100) : @accounts.limit(100)
     @account_sections = @paged_accounts
-                          .group_by { |account| account.datetime.getlocal.strftime('%Y-%m') }
-                          .map do |month, accounts|
-      { title: month, data: accounts.as_json(methods: :username), total: @accounts.month_trunc(month).sum(:change) }
+                          .group_by { |account| account.datetime.getlocal.strftime(type == 'day' ? '%Y-%m-%d' : '%Y-%m') }
+                          .map do |title, accounts|
+      type == 'day' ?
+        { title: title, data: accounts.as_json(methods: :username), total: @accounts.day_trunc(title).sum(:change) } :
+        { title: title, data: accounts.as_json(methods: :username), total: @accounts.month_trunc(title).sum(:change) }
     end
     render json: { accounts: @account_sections,
                    anchor: @paged_accounts.last&.datetime&.to_f,
